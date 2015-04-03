@@ -25,6 +25,22 @@ class GameScene: SKScene {
         redSquare.physicsBody?.affectedByGravity = false
         redSquare.physicsBody?.dynamic = false
         self.addChild(redSquare)
+        
+        
+        let greenSquare = SKSpriteNode(color: UIColor.greenColor(), size: CGSizeMake(200, 30))
+        greenSquare.position = CGPoint(
+            x: 200,
+            y: 400
+        )
+        greenSquare.physicsBody = SKPhysicsBody(rectangleOfSize: CGSizeMake(200, 30))
+        greenSquare.physicsBody?.affectedByGravity = false
+        greenSquare.physicsBody?.dynamic = false
+        self.addChild(greenSquare)
+        let moveA=SKAction.moveTo(CGPoint(x:200,y:400), duration: 6)
+        let moveB=SKAction.moveTo(CGPoint(x:900,y:400), duration: 1)
+        let moveSequens=SKAction.sequence([moveA,moveB])
+        let moveRepeat=SKAction.repeatActionForever(moveSequens)
+        greenSquare.runAction(moveRepeat)
     }
     
     override func touchesBegan(touches: NSSet, withEvent event: UIEvent) {
