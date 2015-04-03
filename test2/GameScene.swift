@@ -8,8 +8,12 @@
 
 import SpriteKit
 
-class GameScene: SKScene {
+class GameScene: SKScene ,SKPhysicsContactDelegate {
+    let redCategory: UInt32 = 0x1 << 0
+    let greenCategory: UInt32 = 0x1 << 1
+    
     override func didMoveToView(view: SKView) {
+        physicsWorld.contactDelegate = self
         let myLabel = SKLabelNode(fontNamed:"Chalkduster")
         myLabel.text = "Hello, World!";
         myLabel.fontSize = 55;
@@ -27,16 +31,19 @@ class GameScene: SKScene {
         self.addChild(redSquare)
         
         
-        let greenSquare = SKSpriteNode(color: UIColor.greenColor(), size: CGSizeMake(200, 30))
+        let greenSquare = SKSpriteNode(imageNamed:"ufo")
         greenSquare.position = CGPoint(
-            x: 200,
+            x: 250,
             y: 400
         )
-        greenSquare.physicsBody = SKPhysicsBody(rectangleOfSize: CGSizeMake(200, 30))
+        greenSquare.physicsBody = SKPhysicsBody(rectangleOfSize: CGSizeMake(200, 100))
         greenSquare.physicsBody?.affectedByGravity = false
         greenSquare.physicsBody?.dynamic = false
+        greenSquare.physicsBody?.categoryBitMask = redCategory
+        greenSquare.physicsBody?.contactTestBitMask = greenCategory
+        
         self.addChild(greenSquare)
-        let moveA=SKAction.moveTo(CGPoint(x:200,y:400), duration: 6)
+        let moveA=SKAction.moveTo(CGPoint(x:250,y:400), duration: 6)
         let moveB=SKAction.moveTo(CGPoint(x:900,y:400), duration: 1)
         let moveSequens=SKAction.sequence([moveA,moveB])
         let moveRepeat=SKAction.repeatActionForever(moveSequens)
@@ -59,6 +66,8 @@ class GameScene: SKScene {
             sprite.physicsBody=SKPhysicsBody(rectangleOfSize: CGSizeMake(30, 50))
             sprite.physicsBody?.affectedByGravity=true;
             sprite.physicsBody?.dynamic=true;
+            sprite.physicsBody?.categoryBitMask = greenCategory
+            sprite.physicsBody?.contactTestBitMask = redCategory
             self.addChild(sprite)
             let sound = SKAction.playSoundFileNamed(name[ran]+".mp3", waitForCompletion: false)
             self.runAction(sound)
@@ -67,5 +76,24 @@ class GameScene: SKScene {
    
     override func update(currentTime: CFTimeInterval) {
         /* Called before each frame is rendered */
+    }
+    func didBeginContact(contact: SKPhysicsContact!) {
+        
+        var firstBody, secondBody: SKPhysicsBody
+        
+        // firstを赤、secondを緑とする。
+        if contact.bodyA.categoryBitMask < contact.bodyB.categoryBitMask {
+            firstBody = contact.bodyA
+            secondBody = contact.bodyB
+        } else {
+            firstBody = contact.bodyB
+            secondBody = contact.bodyA
+        }
+        
+        // 赤と緑が接したときの処理。
+        if firstBody.categoryBitMask & redCategory != 0 &&
+            secondBody.categoryBitMask & greenCategory != 0 {
+                secondBody.node?.removeFromParent()
+        }
     }
    }
