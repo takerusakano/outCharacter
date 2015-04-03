@@ -11,15 +11,16 @@ import SpriteKit
 class GameScene: SKScene ,SKPhysicsContactDelegate {
     let redCategory: UInt32 = 0x1 << 0
     let greenCategory: UInt32 = 0x1 << 1
+    var count :Int=0;
+    let myLabel = SKLabelNode(fontNamed:"Chalkduster")
     
     override func didMoveToView(view: SKView) {
         physicsWorld.contactDelegate = self
-        let myLabel = SKLabelNode(fontNamed:"Chalkduster")
-        myLabel.text = "Hello, World!";
-        myLabel.fontSize = 55;
-        myLabel.position = CGPoint(x:CGRectGetMidX(self.frame), y:CGRectGetMidY(self.frame));
         
+        myLabel.fontSize = 50;
+        myLabel.position = CGPoint(x:CGRectGetMidX(self.frame)+150, y:CGRectGetMidY(self.frame)+300);
         self.addChild(myLabel)
+        
         let redSquare = SKSpriteNode(color: UIColor.redColor(), size: CGSizeMake(200, 30))
         redSquare.position = CGPoint(
             x: CGRectGetMidX(self.frame),
@@ -94,6 +95,8 @@ class GameScene: SKScene ,SKPhysicsContactDelegate {
         if firstBody.categoryBitMask & redCategory != 0 &&
             secondBody.categoryBitMask & greenCategory != 0 {
                 secondBody.node?.removeFromParent()
+                count++
+                myLabel.text = "\(count)";
         }
     }
    }
