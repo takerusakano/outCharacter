@@ -10,36 +10,46 @@ import SpriteKit
 
 class GameScene: SKScene {
     override func didMoveToView(view: SKView) {
-        /* Setup your scene here */
         let myLabel = SKLabelNode(fontNamed:"Chalkduster")
         myLabel.text = "Hello, World!";
-        myLabel.fontSize = 65;
+        myLabel.fontSize = 55;
         myLabel.position = CGPoint(x:CGRectGetMidX(self.frame), y:CGRectGetMidY(self.frame));
         
         self.addChild(myLabel)
+        let redSquare = SKSpriteNode(color: UIColor.redColor(), size: CGSizeMake(200, 30))
+        redSquare.position = CGPoint(
+            x: CGRectGetMidX(self.frame),
+            y: 50
+        )
+        redSquare.physicsBody = SKPhysicsBody(rectangleOfSize: CGSizeMake(200, 30))
+        redSquare.physicsBody?.affectedByGravity = false
+        redSquare.physicsBody?.dynamic = false
+        self.addChild(redSquare)
     }
     
     override func touchesBegan(touches: NSSet, withEvent event: UIEvent) {
         /* Called when a touch begins */
-        
+        self.physicsWorld.gravity = CGVectorMake( 0.0, -5.0 )        /* Setup your scene here */
         for touch: AnyObject in touches {
             let location = touch.locationInNode(self)
             
-            let sprite = SKSpriteNode(imageNamed:"Spaceship")
+            let name :[String]=["dog","cat","bird"]
+            let ran = Int(arc4random_uniform(3));
+            let sprite = SKSpriteNode(imageNamed:name[ran])
             
             sprite.xScale = 0.5
             sprite.yScale = 0.5
             sprite.position = location
-            
-            let action = SKAction.rotateByAngle(CGFloat(M_PI), duration:1)
-            
-            sprite.runAction(SKAction.repeatActionForever(action))
-            
+            sprite.physicsBody=SKPhysicsBody(rectangleOfSize: CGSizeMake(30, 50))
+            sprite.physicsBody?.affectedByGravity=true;
+            sprite.physicsBody?.dynamic=true;
             self.addChild(sprite)
+            let sound = SKAction.playSoundFileNamed(name[ran]+".mp3", waitForCompletion: false)
+            self.runAction(sound)
         }
     }
    
     override func update(currentTime: CFTimeInterval) {
         /* Called before each frame is rendered */
     }
-}
+   }
